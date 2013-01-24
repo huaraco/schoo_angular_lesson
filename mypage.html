@@ -72,11 +72,11 @@
     </script>
     <style>
       .odd{
-        background-color:#555;
+        background-color:#fff;
       }
       
       .even{
-        background-color:#000;
+        background-color:#efefef;
       }
     </style>
   </head>
@@ -84,8 +84,7 @@
   <body ng-controller="MyController" style="background-color:#eeeeee">
     <h1>Family Message</h1>
     <h5>leave a message when you go out</h5>
-    <select ng-model="color" ng-options="c for c in members">
-    </select><br/>
+
     <div style="width:50px;">Name:</div> <input type="text" style="" ng-model="item.data.name" ><br />
     <div style="width:50px;">Message:</div> <input type="text" style="" ng-model="item.data.message" ><br />
     <input type="submit" style="" value="Leave Message" ng-click="add()" >
@@ -97,7 +96,7 @@
         <th>Message</th>
         <th></th>
       </tr>
-      <tr ng-repeat="entity in items.entities" >
+      <tr ng-repeat="entity in items.entities" ng-class-even="'even'" ng-class-odd="'odd'" >
       
         <td >{{entity.data.date | date:'medium'}}</td><td>{{entity.data.name}}</td><td>{{entity.data.message}}</td>
         <td><a href="" ng-click="delete(entity.id)">delete</a></td>
@@ -107,9 +106,7 @@
       
     </form>
     
-    <input type="submit" style="" value="Leave Message" ng-click="delete()" >
-    <pre>{{messages}}</pre>
-    {{cDate}}
+    
   </body>
   
 </html>
