@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html ng-app="JoshuaApp">
+  <head lang="en" >
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular-resource.min.js"></script>
+    
+    <meta charset="utf-8">
+    <title>Joshua App with NG</title>
+    
+    <script language="javascript" type="text/javascript">
+      angular.module('JoshuaApp', ['ngResource']);
+    
+      function MyController($scope,$resource){
+        $scope.members = ['father','mother','brother','sister'];
+        
+        $scope.items={};
+        
+        $scope.apikey = "Joshua2";
+        $scope.remote_url = "code-comparison.appspot.com";
+        $scope.model = "message";
+        $scope.waiting = "Ready";
+        
+        $scope.newMessage = "Hi";
+        $scope.items.data = {"message":"hello world."};
+        
+        $scope.Model = $resource('http://:remote_url/:apikey/:model_type/:id',
+                                {},{'get': {method: 'JSONP', isArray: false, params:{callback: 'JSON_CALLBACK'}}});
+        
+        $scope.add = function(){
+          $scope.SaveResource = $resource('http://:remote_url/:apikey/:model', 
+                        {"remote_url":$scope.remote_url,"apikey":$scope.apikey,"model":$scope.model});
+       
+          $scope.waiting = "Loading";
+          $scope.item.data.date= new Date();
+          var item = new $scope.SaveResource($scope.item.data);
+          $scope.item = item.$save(function(response) { 
+                 // $scope.item = response;
+                  $scope.list();
+                  $scope.waiting = "Ready";
+                }); 
+        };
+        
+         $scope.list = function(){
+          data = {'remote_url':$scope.remote_url,
+                  'model_type':$scope.model,
+                  'apikey':$scope.apikey
+                 }
+          $scope.waiting = "Updating";       
+          $scope.Model.get(data,
+                function(response) { 
+                  $scope.items = response;
+                  $scope.waiting = "Ready";
+                });  
+        };
+        
+        $scope.list();
+        
+        $scope.delete = function(id){
+          data = {'remote_url':$scope.remote_url,
+                  'model_type':$scope.model,
+                  'apikey':$scope.apikey, 
+                  'id': id
+                }
+          $scope.waiting = "Deleting";      
+          $scope.Model.remove(data, 
+              function(response){
+                  $scope.waiting = "Ready";
+                  $scope.list();
+              });
+        };
+      }
+    </script>
+    <style>
+      .odd{
+        background-color:#555;
+      }
+      
+      .even{
+        background-color:#000;
+      }
+    </style>
+  </head>
+  
+  <body ng-controller="MyController" style="background-color:#eeeeee">
+    <h1>Family Message</h1>
+    <h5>leave a message when you go out</h5>
+    <select ng-model="color" ng-options="c for c in members">
+    </select><br/>
+    <div style="width:50px;">Name:</div> <input type="text" style="" ng-model="item.data.name" ><br />
+    <div style="width:50px;">Message:</div> <input type="text" style="" ng-model="item.data.message" ><br />
+    <input type="submit" style="" value="Leave Message" ng-click="add()" >
+    <hr />
+    <table border="1" style="width:100%;">
+      <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Message</th>
+        <th></th>
+      </tr>
+      <tr ng-repeat="entity in items.entities" >
+      
+        <td >{{entity.data.date | date:'medium'}}</td><td>{{entity.data.name}}</td><td>{{entity.data.message}}</td>
+        <td><a href="" ng-click="delete(entity.id)">delete</a></td>
+      </tr>
+    </table>
+    <form method='post' action=''>
+      
+    </form>
+    
+    <input type="submit" style="" value="Leave Message" ng-click="delete()" >
+    <pre>{{messages}}</pre>
+    {{cDate}}
+  </body>
+  
+</html>
